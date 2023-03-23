@@ -1,0 +1,53 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: elasticsearch
+spec:
+  replicas: {{ .Values.replicas }}
+  selector:
+    matchLabels:
+      app: elasticsearch
+  template:
+    metadata:
+      labels:
+        app: elasticsearch
+    annotations: {{ toYaml .Values.podAnnotations | nindent 8 }}
+    spec:
+      securityContext: {{ toYaml .Values.securityContext | nindent 8 }}
+      containers:
+        - name: elasticsearch
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          env: {{ toYaml .Values.env | nindent 12 }}
+          resources: {{ toYaml .Values.resources | nindent 12 }}
+          ports: {{ toYaml .Values.service.ports | nindent 12 }}
+          volumeMounts:
+            - name: data
+              mountPath: /usr/share/elasticsearch/data
+          readinessProbe:
+            httpGet:
+              path: /
+              port: http
+          livenessProbe:
+            httpGet:
+              path: /
+              port: http
+          volumeClaimTemplates:
+            - metadata:
+                name: data
+                labels:
+                  app: elasticsearch
+              spec:
+                accessModes: [ "ReadWriteOnce" ]
+                resources:
+                  requests:
+                    storage: 1Gi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: elasticsearch
+spec:
+  selector:
+    app: elasticsearch
+  ports: {{ toYaml .Values.service.ports | nindent 8 }}
+  type: {{ .Values.service.type }}
