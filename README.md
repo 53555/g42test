@@ -17,7 +17,7 @@ git clone https://github.com/53555/g42test.git
 ```
 2. package the Elasticsearch using helm
 ```sh
-cd g42test/kubernetes/elasticsearch
+cd g42test/kubernetes/elasticsearch && \
 helm package .
 ```
 3. deploy the Elasticsearch package on kubernetes
@@ -30,7 +30,7 @@ kubectl get po
 ```
 make sure elasticsearch pod up and running fine. Run the below commands to validate elasticsearch health
 ```sh
-kubectl port-forward svc/elasticsearch 9200
+kubectl port-forward svc/elasticsearch 9200 &
 curl -XGET 'http://localhost:9200/_cluster/health?pretty=true'
 ```
 by running the above commands, cluster heath status can be retrived and status should be green.
@@ -43,7 +43,7 @@ git clone https://github.com/53555/g42test.git
 ```
 2. package the myapp using helm
 ```sh
-cd g42test/kubernetes/myapp
+cd g42test/kubernetes/myapp && \
 helm package .
 ```
 3. deploy the myapp package on kubernetes
@@ -62,6 +62,7 @@ Here's what each endpoint does:
 
 * `/health:` Returns 'OK' to indicate that the application is running.
 ```sh
+kubectl port-forward svc/myapp-myapp 5000 &
 curl http://localhost:5000/health
 ```
 * `/city:` Accepts a POST request with two parameters: city and population. It stores or updates the population of the specified city in Elasticsearch.
