@@ -98,3 +98,9 @@ curl -X POST -H "Content-Type: application/json" -d '{"city": "Bangalore", "popu
 curl http://localhost:5000/city/Bangalore
 ```
 
+# Shell Script to Deploy Application on K8s
+
+To simplify the deployment and validation procedure, kindly follow below shell script,
+```sh
+./deploy.sh
+```
